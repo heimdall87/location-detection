@@ -1,7 +1,7 @@
 Cinnamon Location
 =================
 
-![](http://cinnamon-spices.linuxmint.com/uploads/applets/6HB3-9QGE-T23U.png)
+![](http://s14.directupload.net/images/140818/ftp65kfo.png)
 
 This Cinnamon applet displays the geographic location of your public IP address.
 
