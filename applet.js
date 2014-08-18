@@ -6,7 +6,8 @@ const Mainloop = imports.mainloop;
 const Gettext = imports.gettext.domain("cinnamon-applets");
 const _ = Gettext.gettext;
 
-const UUID = "cinnamon-location@mindcruzer.com";
+
+const UUID = "location-detection@heimdall";
 const GEO_IP_URL = 'http://api.ipinfodb.com/v3/ip-city/?key=d115c954db28487f38c5d25d5dcf62a5786479b87cc852cabe8fd6f1971d7f89&format=json';
 const REFRESH_INTERVAL = 30
 
@@ -38,7 +39,6 @@ MyApplet.prototype = {
         Applet.TextIconApplet.prototype._init.call(this, orientation);
 
         try {
-            this.set_applet_icon_name("emblem-web");
             this.set_applet_tooltip(_("Your percieved location."));
             this.set_applet_label("...");
         }
@@ -49,7 +49,7 @@ MyApplet.prototype = {
         this.refreshLocation();
     },
 
-    loadJsonAsync: function loadJsonAsync(url, callback) {
+    loadJsonAsync: function loadJsonAsync(url, callback, error_callback) {
         let context = this;
         let message = Soup.Message.new('GET', url);
         
@@ -69,13 +69,16 @@ MyApplet.prototype = {
     refreshLocation: function refreshLocation() {
         this.loadJsonAsync(GEO_IP_URL, function locationCallback (json) {
             if (json !== null) {
-                let cityName = json.get_string_member('cityName');
+                let countryCode = json.get_string_member('countryCode');
                 let ip = json.get_string_member('ipAddress');
+		let countryCode2 = json.get_string_member('countryCode');
                 
-                // city name is returned from IPInfoDB in upper case
-                cityName = cityName.charAt(0).toUpperCase() + cityName.slice(1).toLowerCase();
+                // country code is returned from IPInfoDB in upper case
+               countryCode = countryCode.charAt(0).toLowerCase() + countryCode.slice(1).toLowerCase();
+	       countryCode2 = countryCode.charAt(0).toUpperCase() + countryCode.slice(1).toUpperCase();
    
-                this.set_applet_label(cityName + ' (' + ip + ')');
+                this.set_applet_label(countryCode2 + ' ' + ip);
+	        this.set_applet_icon_path( global.userdatadir + "/applets/location-detection@heimdall/flags/" + countryCode + ".png");
             }
             else {
                 // error getting location
